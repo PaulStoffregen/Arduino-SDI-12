@@ -198,6 +198,15 @@ enum LookaheadMode {
 #define READTIME TCNTX
 #endif  // defined(ESP32) || defined(ESP8266)
 
+#if defined(TEENSYDUINO) && TEENSYDUINO < 159
+enum LookaheadMode {
+  SKIP_ALL,
+  SKIP_NONE,
+  SKIP_WHITESPACE
+};
+#endif
+
+
 /**
  * @brief The main class for SDI 12 instances
  */

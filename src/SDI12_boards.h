@@ -509,6 +509,51 @@ class SDI12Timer {
  */
 #define RX_WINDOW_FUDGE 2
 
+
+// Teensy 4.x
+//
+#elif defined(__IMXRT1062__)
+
+// SDI12::receiveISR needs under 256 counts during 10 bits at 1200 baud,
+// which means we must keep the counter increment speed under 30.7 kHz
+#if F_CPU > 600000000
+#define CYCCNT_SHIFT 16
+#elif F_CPU > 300000000
+#define CYCCNT_SHIFT 15
+#elif F_CPU > 150000000
+#define CYCCNT_SHIFT 14
+#elif F_CPU > 75000000
+#define CYCCNT_SHIFT 13
+#elif F_CPU > 37500000
+#define CYCCNT_SHIFT 12
+#else
+#define CYCCNT_SHIFT 11
+#endif
+
+#define TCNTX ((uint8_t)(ARM_DWT_CYCCNT >> CYCCNT_SHIFT))
+#define TIMER_IN_USE_STR "ARM DWT Cycle Counter"
+
+#define TICKS_PER_BIT_FLOAT ((float)(F_CPU) / (float)((1<<CYCCNT_SHIFT) * 1200))
+#define BITS_PER_TICK_FLOAT ((float)((1<<CYCCNT_SHIFT) * 1200) / (float)(F_CPU))
+
+/**
+ * @brief The number of "ticks" of the timer that occur within the timing of one bit at
+ * the SDI-12 baud rate of 1200 bits/second.
+ */
+#define TICKS_PER_BIT (uint8_t)(TICKS_PER_BIT_FLOAT + 0.5f)
+
+/**
+ * @brief Unused when BITS_PER_TICK_FLOAT is defined
+ */
+
+#define BITS_PER_TICK_Q10 (uint8_t)((1024.0f / TICKS_PER_BIT_FLOAT))
+
+/**
+ * @brief Unused when BITS_PER_TICK_FLOAT is defined
+ */
+#define RX_WINDOW_FUDGE 0
+
+
 // Unknown board
 #else
 #error "Please define your board timer and pins"

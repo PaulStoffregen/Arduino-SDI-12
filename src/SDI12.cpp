@@ -83,9 +83,15 @@ uint16_t SDI12::mul8x8to16(uint8_t x, uint8_t y) {
   return x * y;
 }
 
+#if defined(BITS_PER_TICK_FLOAT)
+uint16_t SDI12::bitTimes(uint8_t dt) {
+  return (uint16_t)((float)dt * BITS_PER_TICK_FLOAT);
+}
+#else
 uint16_t SDI12::bitTimes(uint8_t dt) {
   return mul8x8to16(dt + rxWindowWidth, bitsPerTick_Q10) >> 10;
 }
+#endif
 
 /* ================ Buffer Setup ====================================================*/
 uint8_t          SDI12::_rxBuffer[SDI12_BUFFER_SIZE];  // The Rx buffer

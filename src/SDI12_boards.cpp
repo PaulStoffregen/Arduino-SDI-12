@@ -273,6 +273,17 @@ sdi12timer_t SDI12Timer::SDI12TimerRead(void) {
   // 6
   return ((sdi12timer_t)(micros() >> 6));
 }
+
+// Teensy 4.x
+//
+#elif defined(__IMXRT1062__)
+
+void SDI12Timer::configSDI12TimerPrescale(void) {
+  ARM_DWT_CTRL |= ARM_DWT_CTRL_CYCCNTENA;
+}
+void SDI12Timer::resetSDI12TimerPrescale(void) {
+}
+
 // Unknown board
 #else
 #error "Please define your board timer and pins"
